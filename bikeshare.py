@@ -9,12 +9,12 @@ CITY_DATA = {
 
 def get_filters():
     """
-    Asks user to specify a city, month, and day to analyze.
-    
+    Prompts the user to select a city, month, and day for data analysis.
+
     Returns:
-        (str) city - name of the city to analyze
-        (str) month - name of the month to filter by, or "all" to apply no month filter
-        (str) day - name of the day of week to filter by, or "all" to apply no day filter
+        city (str): Name of the city to analyze (e.g., 'chicago', 'new york city', 'washington').
+        month (str): Name of the month to filter by, or "all" for no month filter.
+        day (str): Name of the day of the week to filter by, or "all" for no day filter.
     """
     print('Hello! Let\'s explore some US bikeshare data!')
     
@@ -31,14 +31,14 @@ def get_filters():
 
 def get_user_input(prompt, valid_options):
     """
-    Helper function to get user input and validate it against a list of valid options.
-    
+    Validates and returns user input based on a set of valid options.
+
     Args:
-        (str) prompt - input prompt for the user
-        (list) valid_options - list of valid options for the user input
-    
+        prompt (str): The message to display when asking for user input.
+        valid_options (list): A list of valid input options.
+
     Returns:
-        (str) user_input - validated user input
+        user_input (str): The validated user input.
     """
     while True:
         user_input = input(prompt).lower()
@@ -48,15 +48,15 @@ def get_user_input(prompt, valid_options):
 
 def load_data(city, month, day):
     """
-    Loads data for the specified city and filters by month and day if applicable.
-    
+    Loads and filters the bikeshare data for the specified city, month, and day.
+
     Args:
-        (str) city - name of the city to analyze
-        (str) month - name of the month to filter by, or "all" to apply no month filter
-        (str) day - name of the day of week to filter by, or "all" to apply no day filter
-    
+        city (str): Name of the city to analyze.
+        month (str): Name of the month to filter by, or "all" for no month filter.
+        day (str): Name of the day of the week to filter by, or "all" for no day filter.
+
     Returns:
-        df - Pandas DataFrame containing city data filtered by month and day
+        df (DataFrame): Pandas DataFrame containing the filtered bikeshare data.
     """
     df = pd.read_csv(CITY_DATA[city])
     df['Start Time'] = pd.to_datetime(df['Start Time'])
@@ -73,7 +73,15 @@ def load_data(city, month, day):
     return df
 
 def time_stats(df):
-    """Displays statistics on the most frequent times of travel."""
+    """
+    Displays statistics on the most frequent times of travel based on the filtered data.
+
+    Args:
+        df (DataFrame): The filtered bikeshare data.
+
+    Prints:
+        Most Common Month, Day, and Hour of travel.
+    """
     print('\nCalculating The Most Frequent Times of Travel...\n')
     start_time = time.time()
 
@@ -85,7 +93,15 @@ def time_stats(df):
     print(f"\nThis took {time.time() - start_time} seconds.")
 
 def station_stats(df):
-    """Displays statistics on the most popular stations and trip."""
+    """
+    Displays statistics on the most popular stations and trips based on the filtered data.
+
+    Args:
+        df (DataFrame): The filtered bikeshare data.
+
+    Prints:
+        Most Commonly Used Start Station, End Station, and Trip Combination.
+    """
     print('\nCalculating The Most Popular Stations and Trip...\n')
     start_time = time.time()
 
@@ -97,7 +113,15 @@ def station_stats(df):
     print(f"\nThis took {time.time() - start_time} seconds.")
 
 def trip_duration_stats(df):
-    """Displays statistics on the total and average trip duration."""
+    """
+    Displays statistics on the total and average trip duration based on the filtered data.
+
+    Args:
+        df (DataFrame): The filtered bikeshare data.
+
+    Prints:
+        Total Travel Time and Mean Travel Time in days and minutes respectively.
+    """
     print('\nCalculating Trip Duration...\n')
     start_time = time.time()
 
@@ -109,7 +133,15 @@ def trip_duration_stats(df):
     print(f"\nThis took {time.time() - start_time} seconds.")
 
 def user_stats(df):
-    """Displays statistics on bikeshare users."""
+    """
+    Displays statistics on bikeshare users based on the filtered data.
+
+    Args:
+        df (DataFrame): The filtered bikeshare data.
+
+    Prints:
+        Count of User Types, Gender Types, and statistics on Birth Year if available.
+    """
     print('\nCalculating User Stats...\n')
     start_time = time.time()
 
@@ -124,7 +156,15 @@ def user_stats(df):
     print(f"\nThis took {time.time() - start_time} seconds.")
 
 def display_raw_data(df):
-    """Displays raw data upon user request."""
+    """
+    Displays raw data in chunks of 5 rows based on user input.
+
+    Args:
+        df (DataFrame): The filtered bikeshare data.
+
+    Asks:
+        User if they would like to see 5 rows of raw data at a time.
+    """
     start_loc = 0
     while True:
         view_data = input("Do you want to see raw data? Type 'yes' or 'no':\n").lower()
@@ -135,6 +175,12 @@ def display_raw_data(df):
             break
 
 def main():
+    """
+    Main function that orchestrates the bikeshare data exploration.
+
+    The function repeatedly prompts the user to select a city, month, and day,
+    loads the filtered data, displays statistics, and offers the option to restart.
+    """
     while True:
         city, month, day = get_filters()
         df = load_data(city, month, day)
@@ -150,4 +196,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
