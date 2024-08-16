@@ -16,16 +16,22 @@ def get_filters():
         month (str): Name of the month to filter by, or "all" for no month filter.
         day (str): Name of the day of the week to filter by, or "all" for no day filter.
     """
-    print('Hello! Let\'s explore some US bikeshare data!')
+    print("Hello! Let's explore some US bikeshare data!")
     
-    city = get_user_input("Which city would you like to filter by? new york city, chicago or washington?\n", 
-                          ["new york city", "chicago", "washington"])
+    city = get_user_input(
+        "Which city would you like to filter by? (new york city, chicago, washington)\n",
+        CITY_DATA.keys()
+    )
     
-    month = get_user_input("Which month would you like to filter by? January, February, March, April, May, June or type 'all' if you do not have any preference?\n", 
-                           ["january", "february", "march", "april", "may", "june", "all"])
+    month = get_user_input(
+        "Which month would you like to filter by? (January, February, March, April, May, June) or type 'all' if no preference\n",
+        ["january", "february", "march", "april", "may", "june", "all"]
+    )
     
-    day = get_user_input("Are you looking for a particular day? If so, kindly enter the day as follows: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday or type 'all' if you do not have any preference.\n", 
-                         ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "all"])
+    day = get_user_input(
+        "Which day? (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday) or type 'all' if no preference\n",
+        ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "all"]
+    )
     
     return city, month, day
 
@@ -44,7 +50,7 @@ def get_user_input(prompt, valid_options):
         user_input = input(prompt).lower()
         if user_input in valid_options:
             return user_input
-        print("Sorry, I didn't catch that. Try again.")
+        print("Invalid input. Please try again.")
 
 def load_data(city, month, day):
     """
@@ -60,12 +66,11 @@ def load_data(city, month, day):
     """
     df = pd.read_csv(CITY_DATA[city])
     df['Start Time'] = pd.to_datetime(df['Start Time'])
-    df['month'] = df['Start Time'].dt.month
-    df['day_of_week'] = df['Start Time'].dt.strftime('%A').str.lower()
+    df['month'] = df['Start Time'].dt.month_name().str.lower()
+    df['day_of_week'] = df['Start Time'].dt.day_name().str.lower()
     
     if month != 'all':
-        month_index = ['january', 'february', 'march', 'april', 'may', 'june'].index(month) + 1
-        df = df[df['month'] == month_index]
+        df = df[df['month'] == month]
     
     if day != 'all':
         df = df[df['day_of_week'] == day]
@@ -85,10 +90,10 @@ def time_stats(df):
     print('\nCalculating The Most Frequent Times of Travel...\n')
     start_time = time.time()
 
-    print("Most Common Month:", df['month'].mode()[0])
-    print("Most Common Day:", df['day_of_week'].mode()[0])
+    print(f"Most Common Month: {df['month'].mode()[0].title()}")
+    print(f"Most Common Day: {df['day_of_week'].mode()[0].title()}")
     df['hour'] = df['Start Time'].dt.hour
-    print("Most Common Hour:", df['hour'].mode()[0])
+    print(f"Most Common Hour: {df['hour'].mode()[0]}")
 
     print(f"\nThis took {time.time() - start_time} seconds.")
 
@@ -105,10 +110,10 @@ def station_stats(df):
     print('\nCalculating The Most Popular Stations and Trip...\n')
     start_time = time.time()
 
-    print("Most Commonly Used Start Station:", df['Start Station'].mode()[0])
-    print("Most Commonly Used End Station:", df['End Station'].mode()[0])
+    print(f"Most Commonly Used Start Station: {df['Start Station'].mode()[0]}")
+    print(f"Most Commonly Used End Station: {df['End Station'].mode()[0]}")
     common_trip = df.groupby(['Start Station', 'End Station']).size().idxmax()
-    print("Most Commonly Used Combination of Start and End Station Trip:", common_trip)
+    print(f"Most Commonly Used Combination of Start and End Station Trip: {common_trip}")
 
     print(f"\nThis took {time.time() - start_time} seconds.")
 
@@ -145,13 +150,15 @@ def user_stats(df):
     print('\nCalculating User Stats...\n')
     start_time = time.time()
 
-    print("User Types:", df['User Type'].value_counts().to_dict())
+    print(f"User Types: {df['User Type'].value_counts().to_dict()}")
+    
     if 'Gender' in df.columns:
-        print("Gender Types:", df['Gender'].value_counts().to_dict())
+        print(f"Gender Types: {df['Gender'].value_counts().to_dict()}")
+    
     if 'Birth Year' in df.columns:
-        print("Earliest Year of Birth:", int(df['Birth Year'].min()))
-        print("Most Recent Year of Birth:", int(df['Birth Year'].max()))
-        print("Most Common Year of Birth:", int(df['Birth Year'].mode()[0]))
+        print(f"Earliest Year of Birth: {int(df['Birth Year'].min())}")
+        print(f"Most Recent Year of Birth: {int(df['Birth Year'].max())}")
+        print(f"Most Common Year of Birth: {int(df['Birth Year'].mode()[0])}")
 
     print(f"\nThis took {time.time() - start_time} seconds.")
 
@@ -190,8 +197,7 @@ def main():
         trip_duration_stats(df)
         user_stats(df)
 
-        restart = input('\nWould you like to restart? Enter yes or no.\n')
-        if restart.lower() != 'yes':
+        if input('\nWould you like to restart? Enter yes or no.\n').lower() != 'yes':
             break
 
 if __name__ == "__main__":
